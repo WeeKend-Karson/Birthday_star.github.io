@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>青苹果乐园奇遇记 - V5.2 修复版</title>
+    <style>
+        /* =========================================
+           0. 全局样式 (Global)
+           ========================================= */
+        :root {
+            --bg-color: #F1F8E9;
+            --primary-color: #8BC34A;
+            --dark-green: #33691E;
+            --accent-color: #F48FB1;
+            --box-color: #7CB342;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--dark-green);
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .stage {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .hidden { display: none !important; }
+
+        /* =========================================
+           1. 阶段一：深情独白
+           ========================================= */
+        #stage-1 {
+            display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #ffffff 0%, #DCEDC8 100%);
+            z-index: 10;
+        }
+        #stage-1::before {
+            content: ''; position: absolute; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(244,143,177,0.2), transparent 40%);
+            animation: rotate-bg 20s linear infinite;
+        }
+        @keyframes rotate-bg { 0% { transform: translate(-25%, -25%) rotate(0deg); } 100% { transform: translate(-25%, -25%) rotate(360deg); } }
+
+        .text-container { position: relative; z-index: 2; width: 80%; text-align: center; }
+        .monologue-line {
+            font-size: 1.8rem; line-height: 1.6; font-weight: bold; color: var(--dark-green);
+            opacity: 0; transform: translateY(20px); transition: all 1s ease-out;
+            text-shadow: 0 2px 10px rgba(139, 195, 74, 0.3);
+        }
+        .monologue-line.visible { opacity: 1; transform: translateY(0); }
+
+        /* =========================================
+           2. 阶段二：果园漫游 (关键修复)
+           ========================================= */
+        #stage-2 {
+            background: linear-gradient(to bottom, #E0F2F1 0%, #C8E6C9 100%);
+            perspective: 600px;
+        }
+        .bg-trees {
+            position: absolute; bottom: 60px; left: 0; width: 200vw; height: 40vh;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="150" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="%238BC34A" opacity="0.8"/><rect x="45" y="50" width="10" height="100" fill="%235D4037"/></svg>');
+            background-repeat: repeat-x; background-size: 120px auto; opacity: 0.6;
+            animation: scroll-left 20s linear infinite;
+        }
+        .ground {
+            position: absolute; bottom: 0; width: 100%; height: 60px;
+            background: #81C784; border-top: 4px solid #689F38;
+        }
+        @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50vw); } }
+
+        .photo-track { position: absolute; top: 15%; left: 0; width: 100%; height: 60%; pointer-events: none; }
+
+        .flying-photo {
+            position: absolute; top: 20px; left: 110vw;
+            width: 240px; height: 320px;
+            background: #fff; padding: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 8px; transform: rotate(5deg);
+        }
+        /* 图片样式：如果加载失败会显示边框 */
+        .flying-photo img {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 4px;
+            background-color: #eee; /* 加载前的背景色 */
+        }
+
+        /* 错误提示样式 */
+        .img-error {
+            display: flex !important; justify-content: center; align-items: center;
+            color: red; font-size: 12px; border: 2px dashed red;
+            background: #fff0f0; text-align: center;
+        }
+
+        @keyframes slide-pass {
+            0% { left: 110vw; transform: rotate(5deg) scale(0.9); }
+            50% { transform: rotate(-2deg) scale(1); }
+            100% { left: -300px; transform: rotate(5deg) scale(0.9); }
+        }
+
+        #white-flash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 999; opacity: 0; pointer-events: none;
+            transition: opacity 1.8s ease-in-out;
+        }
+
+        /* =========================================
+           3. 阶段三 & 四 (保持不变)
+           ========================================= */
+        #stage-3 { background-color: #FFF3E0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .cake-group { position: relative; transform: scale(1.2); margin-top: 50px; }
+        .cake-bottom { width: 180px; height: 70px; background: #9CCC65; border-radius: 10px; position: relative; }
+        .cake-bottom::after { content:''; position: absolute; top:10px; left:0; width:100%; height:10px; background:var(--accent-color); opacity:0.6; }
+        .cake-top { width: 140px; height: 60px; background: #C5E1A5; border-radius: 10px; position: absolute; bottom: 70px; left: 20px; }
+        .cake-cream { position: absolute; top:-5px; left:0; width:100%; height:15px; background:#fff; border-radius:10px; }
+        .candle { position: absolute; bottom: 130px; left: 85px; width: 10px; height: 40px; background: #FFCDD2; z-index: 50; }
+        .flame {
+            width: 20px; height: 30px; background: radial-gradient(ellipse at bottom, #FFEB3B 0%, #FF5722 100%);
+            border-radius: 50% 50% 20% 20%; position: absolute; top: -30px; left: -5px;
+            animation: flicker 0.5s infinite alternate; cursor: pointer; z-index: 100;
+            box-shadow: 0 0 15px rgba(255, 87, 34, 0.8);
+        }
+        .flame-hitbox { position: absolute; top: -50px; left: -25px; width: 60px; height: 70px; background: transparent; z-index: 101; cursor: pointer; }
+        @keyframes flicker { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(1.1) rotate(2deg); opacity: 1; } }
+        .smoke { position: absolute; top: -40px; left: 0; width: 10px; height: 10px; background: #bbb; border-radius: 50%; opacity: 0; pointer-events: none; }
+        .smoke.animate { animation: smoke-rise 1.5s forwards; }
+        @keyframes smoke-rise { 0% { opacity:0.6; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(-50px) scale(3); } }
+        .hint-bubble {
+            margin-top: 100px; background: #fff; padding: 10px 20px; border-radius: 20px;
+            color: var(--primary-color); font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: float-bubble 2s ease-in-out infinite;
+        }
+        @keyframes float-bubble { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+        #black-overlay { position: fixed; inset: 0; background: #000; z-index: 998; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
+
+        #stage-4 { background: radial-gradient(circle at bottom, #1B5E20 0%, #000000 80%); perspective: 1000px; display: flex; justify-content: center; align-items: center; }
+        canvas { position: absolute; inset: 0; z-index: 1; }
+        .gift-container {
+            width: 120px; height: 120px; position: relative; transform-style: preserve-3d; cursor: pointer;
+            z-index: 10; transform: rotateX(-20deg) rotateY(30deg); opacity: 0; transition: opacity 1s;
+        }
+        .gift-floating { animation: float-box 3s ease-in-out infinite; }
+        @keyframes float-box { 0%, 100% { transform: translate(0, 0) rotateX(-20deg) rotateY(30deg); } 50% { transform: translate(0, -20px) rotateX(-15deg) rotateY(35deg); } }
+        .face { position: absolute; width: 120px; height: 120px; background: var(--primary-color); border: 1px solid rgba(255,255,255,0.2); box-shadow: inset 0 0 20px rgba(0,0,0,0.1); }
+        .f-front { transform: translateZ(60px); }
+        .f-back { transform: rotateY(180deg) translateZ(60px); }
+        .f-right { transform: rotateY(90deg) translateZ(60px); background: var(--box-color); }
+        .f-left { transform: rotateY(-90deg) translateZ(60px); background: var(--box-color); }
+        .f-top { transform: rotateX(90deg) translateZ(60px); background: #AED581; }
+        .f-bottom { transform: rotateX(-90deg) translateZ(60px); box-shadow: 0 0 40px var(--primary-color); }
+        .ribbon-v { position: absolute; left: 50%; transform: translateX(-50%); width: 25px; height: 100%; background: var(--accent-color); }
+        .ribbon-h { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; height: 25px; background: var(--accent-color); }
+        .bow { position: absolute; top: -30px; left: 35px; width: 50px; height: 20px; background: var(--accent-color); border-radius: 10px; transform: translateZ(60px) rotateX(-90deg); z-index: 20; }
+        
+        .final-card {
+            position: absolute; width: 300px; height: 420px; background: #fff; border-radius: 16px; border: 6px solid var(--primary-color);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5); z-index: 100; transform: scale(0) translateY(100px); opacity: 0;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .final-card.show { transform: scale(1) translateY(0); opacity: 1; }
+        .card-title { color: var(--accent-color); font-size: 1.6rem; margin-bottom: 10px; }
+        .card-ticket { margin: 20px 0; padding: 15px; border: 2px dashed var(--accent-color); background: #FFFDE7; font-size: 1.4rem; color: var(--dark-green); font-weight: bold; transform: rotate(-2deg); }
+        .card-icon { font-size: 3rem; margin-top: 10px; }
+        .card-tip { margin-top: auto; font-size: 0.8rem; color: #aaa; }
+    </style>
+</head>
+<body>
+
+    <div id="stage-1" class="stage">
+        <div class="text-container">
+            <div id="monologue-text" class="monologue-line"></div>
+        </div>
+    </div>
+
+    <div id="stage-2" class="stage hidden">
+        <div class="bg-trees"></div>
+        <div class="ground"></div>
+        <div class="photo-track" id="photo-track"></div>
+    </div>
+
+    <div id="white-flash"></div>
+
+    <div id="stage-3" class="stage hidden">
+        <div class="cake-group">
+            <div class="cake-bottom"></div>
+            <div class="cake-top"><div class="cake-cream"></div></div>
+            <div class="candle">
+                <div class="flame"></div>
+                <div class="flame-hitbox" id="click-flame"></div>
+                <div class="smoke" id="smoke-effect"></div>
+            </div>
+        </div>
+        <div class="hint-bubble">👆 戳一下火苗，完成赛博许愿</div>
+    </div>
+
+    <div id="black-overlay"></div>
+
+    <div id="stage-4" class="stage hidden">
+        <canvas id="particle-canvas"></canvas>
+        <div class="gift-container gift-floating" id="gift-box">
+            <div class="face f-front"><div class="ribbon-v"></div><div class="ribbon-h"></div></div>
+            <div class="face f-back"><div class="ribbon-v"></div><div class="ribbon-h"></div></div>
+            <div class="face f-right"><div class="ribbon-v"></div><div class="ribbon-h"></div></div>
+            <div class="face f-left"><div class="ribbon-v"></div><div class="ribbon-h"></div></div>
+            <div class="face f-top"><div class="ribbon-v"></div><div class="ribbon-h"></div><div class="bow"></div></div>
+            <div class="face f-bottom"></div>
+        </div>
+        <div class="final-card" id="gift-card">
+            <h2 class="card-title">Happy Birthday!</h2>
+            <p style="font-size: 0.9rem; color:#666;">To: 全世界最可爱的欣欣木</p>
+            <div class="card-ticket">✨ 随时随地 ✨<br>兑换一次大餐</div>
+            <div class="card-icon">🍎🎁🎂</div>
+            <p class="card-tip">（长按截图保存你的生日礼物）</p>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // 配置数据
+        // =========================================
+        const CONFIG = {
+            lines: [
+                "尊敬的 可爱的 善良的 有趣的 美丽的<br>漂亮的 沉鱼落雁 闭月羞花的欣欣木下士",
+                "恭喜你",
+                "开启了人生新的一岁",
+                "祝你在新的一岁",
+                "学业顺利 永遇良人，万事如意，始终年轻，始终开心向上",
+                "接下来",
+                "是来自伟大的暴龙战士",
+                "给最可爱最萌的欣欣木的",
+                "定制版链接"
+            ],
+            // 使用 photos/ 前缀
+            photos: [
+                "photos/1.jpg",
+                "photos/4.jpg",
+                "photos/5.jpg",
+                "photos/7.jpg",
+                "photos/10.jpg",
+                "photos/13.jpg",
+                "photos/14.jpg",
+                "photos/15.jpg",
+                "photos/17.jpg",
+                "photos/19.jpg",
+                "photos/21.jpg",
+            ]
+        };
+
+        window.onload = function() { setTimeout(startStage1, 500); };
+
+        async function startStage1() {
+            const textEl = document.getElementById('monologue-text');
+            const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            for (let i = 0; i < CONFIG.lines.length; i++) {
+                textEl.innerHTML = CONFIG.lines[i];
+                textEl.classList.add('visible');
+                await wait(2000 + (CONFIG.lines[i].length * 100));
+                textEl.classList.remove('visible');
+                await wait(1000);
+            }
+            nextStage(1, 2);
+        }
+
+        function startStage2() {
+            const track = document.getElementById('photo-track');
+            const total = CONFIG.photos.length;
+            let finished = 0;
+            CONFIG.photos.forEach((url, idx) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'flying-photo';
+                    // 核心修改：添加onerror处理，如果图片不显示，会变红并提示，而不是消失
+                    el.innerHTML = `<img src="${url}" alt="照片加载失败" onerror="this.parentElement.classList.add('img-error'); this.src=''; this.alt='❌路径错误';">`;
+                    el.style.animation = `slide-pass 6s linear forwards`;
+                    track.appendChild(el);
+                    el.addEventListener('animationend', () => {
+                        el.remove();
+                        finished++;
+                        if (finished === total) triggerWhiteFlash();
+                    });
+                }, idx * 2500);
+            });
+        }
+
+        function triggerWhiteFlash() {
+            const flash = document.getElementById('white-flash');
+            flash.style.opacity = 1;
+            setTimeout(() => {
+                document.getElementById('stage-2').classList.add('hidden');
+                document.getElementById('stage-3').classList.remove('hidden');
+                setTimeout(() => {
+                    flash.style.opacity = 0;
+                    setTimeout(() => { flash.style.display = 'none'; }, 1800);
+                    startStage3();
+                }, 500);
+            }, 1000);
+        }
+
+        function startStage3() {
+            const btn = document.getElementById('click-flame');
+            const flame = document.querySelector('.flame');
+            const smoke = document.getElementById('smoke-effect');
+            const black = document.getElementById('black-overlay');
+            btn.onclick = function() {
+                flame.style.display = 'none'; btn.style.display = 'none';
+                smoke.classList.add('animate');
+                setTimeout(() => {
+                    black.style.opacity = 1;
+                    setTimeout(() => {
+                        document.getElementById('stage-3').classList.add('hidden');
+                        document.getElementById('stage-4').classList.remove('hidden');
+                        black.style.opacity = 0;
+                        startStage4();
+                    }, 1500);
+                }, 800);
+            };
+        }
+
+        function startStage4() {
+            initParticles();
+            const box = document.getElementById('gift-box');
+            const card = document.getElementById('gift-card');
+            box.style.opacity = 1;
+            box.onclick = function() {
+                box.style.opacity = 0; box.style.pointerEvents = 'none';
+                setTimeout(() => { card.classList.add('show'); }, 300);
+            };
+        }
+
+        function nextStage(current, next) {
+            document.getElementById(`stage-${current}`).classList.add('hidden');
+            const nextEl = document.getElementById(`stage-${next}`);
+            nextEl.classList.remove('hidden');
+            if (next === 2) startStage2();
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const particles = [];
+            const colors = ['#F48FB1', '#8BC34A', '#FFF59D', '#FFFFFF'];
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width + 200;
+                    this.y = Math.random() * canvas.height * 0.6 - 100;
+                    this.len = Math.random() * 80 + 20; this.speed = Math.random() * 6 + 4;
+                    this.size = Math.random() * 2 + 0.5; this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.angle = Math.PI / 4;
+                }
+                update() {
+                    this.x -= this.speed * Math.cos(this.angle); this.y += this.speed * Math.sin(this.angle);
+                    if (this.x < -100 || this.y > canvas.height + 100) this.reset();
+                }
+                draw() {
+                    ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+                    const gradient = ctx.createLinearGradient(0, 0, -this.len, 0);
+                    gradient.addColorStop(0, this.color); gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient; ctx.beginPath(); ctx.rect(-this.len, -this.size/2, this.len, this.size); ctx.fill();
+                    ctx.shadowBlur = 10; ctx.shadowColor = this.color; ctx.fillStyle = '#fff';
+                    ctx.beginPath(); ctx.arc(0, 0, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                }
+            }
+            for(let i=0; i<50; i++) particles.push(new Particle());
+            function animate() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = 'lighter'; particles.forEach(p => { p.update(); p.draw(); });
+                ctx.globalCompositeOperation = 'source-over'; requestAnimationFrame(animate);
+            }
+            animate();
+            window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+        }
+    </script>
+</body>
+</html>
